@@ -136,8 +136,8 @@ $$
 $$
 The modified and conventional mergesort programs have the same time-complexity when $k=\log n$.
 
-### d) practical choice of k. 
-In practice, I would also consider the space complexity when choosing $k$.
+### d) Practical choice of k. 
+In practice, my choice in $k$ would depend on the hardware my program is running on, as well as the maximum $k$ value for which the two mergesort algorithms are equal in time-complexity. As we showed in c), as $k$ increases above the $k = \log n$ threshold, the modified mergesort time-complexity gets comparatively worse to the conventional mergesort. Thus, I would choose a value of $k$ between 2 (as a $k=1$ is the same as conventional mergesort) and $\log n$. I would then tune for an optimal $k$ for the exact hardware this program is running on.
 
 ## Q3
 
@@ -169,10 +169,12 @@ T(n) \le T(n/2) + c, n > 2\\
 \end{aligned}
 $$
 The recurrence tree for it looks like the following:
-![recur tree](/home/immasushiroll/Windows/Users/jane8/repos/school/ALGOS2/image.png)
+
+![(a)-(e) shows the formation of the recursion tree. The total cost is also written.](/home/immasushiroll/Windows/Users/jane8/repos/school/ALGOS2/recurtree.png)
+
 The runtime based on this tree is thus $c\log_2n$ which is $\Theta(\log n)$.
 
-### Proving time complexity of the recurrence relation is $\Theta(\log n)$
+### Proving time complexity of the recurrence relation is $\Theta(\log n)$.
 In other words, we will now show that $T(n) \le c\log_2n$, $n>2$
 
 _Proof._ Proof by **Induction**: Given the recurrence relation, we will show for $n >2$, $T(n) \le clog_2n$. 
@@ -217,3 +219,120 @@ Which is $\Theta(\log_n)$.
 Therefore, $T(n) \le c\log_2n$ and is $\Theta(\log n)$. $\blacksquare$
 
 ## Q5
+### a) Recursive function to compute $F_n$ given the definition and output for $F_{i*5}$, $0 \le i\le 10$.
+Code (for C++):
+```cpp
+long long compute_fib(int n) {
+	      if (n < 0) return 0;
+	      else if (n == 0) return 2;
+	      else if (n == 1) return 2;
+	      else return compute_sequence_7a(n-1) + compute_sequence_7a(n-2);
+}
+
+int main() {
+    for (int i = 0; i <= 10; i++) {
+        cout << "F_" << i * 5 << " = " << compute_fib(i * 5) << endl;
+    }
+    return 0;
+}
+```
+Time complexity: $O(2^n)$.
+
+Output:
+```
+F_0 = 0
+F_5 = 5
+F_10 = 55
+F_15 = 610
+F_20 = 6765
+F_25 = 75025
+F_30 = 832040
+F_35 = 9227465
+F_40 = 102334155
+F_45 = 1134903170
+F_50 = 12586269025
+```
+
+### b) Recursive function to compute $F_n$ in $O(n)$ (precisely $O(nA(n))$), n is large, $A(n)$ is complexity of adding $F_{n-1}$ and $F_{n-2}$, and output for $F_{i*20}$, $0 \le i\le 25$.
+Code (for C++):
+```cpp
+std::tuple<big_int, big_int> compute_fib_better(int n)
+{
+    if (n < 0)
+        return std::make_tuple(big_int(0), big_int(0));
+    else if (n == 0)
+        return std::make_tuple(big_int(2), big_int(0));
+    else if (n == 1)
+        return std::make_tuple(big_int(2), big_int(2));
+
+    std::tuple<big_int, big_int> prev_pair = compute_fib_better(n - 1);
+
+    big_int previous = std::get<0>(prev_pair);
+    big_int current = std::get<1>(prev_pair);
+
+    current.add(previous);
+
+    return std::make_tuple(current, previous);
+}
+
+int main()
+{
+    for (int i = 0; i <= 25; i++) {
+        std::cout << std::get<0>(compute_fib_better(i * 20)).to_string() << std::endl;
+    }
+}
+```
+Time complexity: $O(n)$.
+
+Output (Got cut off in the `.md`, see `q5b.cpp` for the full output start from line 114.):
+```
+2
+21892
+331160282
+5009461563922
+75778124746287812
+1146295688027634168202
+17340014797015897316103842
+262302402688163790673068649732
+3967848428123838864495612148392122
+60021642909926907815061334295658979762
+907947388330615906394593939394821238467652
+13734520083255583906104114706164126578641192042
+207762084391459829417021036765550803360284073551682
+3142817036855092756335693317048372296266890601975101572
+47541393108744903733630203389969690960078450775793287927962
+719158650413167121923531330344378198104734428618534464511179602
+10878712857258585944592354700489205612760626741634120068867325911492
+164562288672591979170681427630768882959851802615964905663221574551959882
+2489333729871586011656312011178286192044472605411074386333432689380171223522
+37656151167205192925733052622412507596287854142201519626100930629032275546257412
+569624596216979223515977875362921991230760177564609781972954391291938542808064647802
+8616711229318093546921004394881868338935201609731998029703361450972223708025318381043442
+130344990196270204867294809965400147000150803519655756630712966695902436739360448341979499332
+1971728658082268159709475043425603628789412865906631020820797017505554709584081794043805505351722
+29826339280465480255655024114604296127297301422418803932300439853093559395975968559140197537475999362
+451183032323872661745025390072144144092022649827516381177277732836949255477373766810031974105593936997252
+```
+### c) Time needed for each algorithm with comparison and conclusion.
+
+`time` output for the program in **a)**:
+```
+real    2m0.400s
+user    2m0.208s
+sys     0m0.003s
+```
+
+`time` output for the program in **b)**:
+```
+real    0m0.229s
+user    0m0.226s
+sys     0m0.001s
+```
+
+The program in **b)** is exponentially faster than the program in **a)** which aligns with their respective time complexities of $O(n)$ and $O(2^n)$. We see the a) program is already slower on a relatively small n, and would do badly for a large $n$, but it is intuitive and easy to understand. Program b) however is far more efficient despite the slightly more complicated intuition behind it.
+
+### d) Using 5a) program to compute $F_{50}$ using int type of 4 bytes vs the 5b) program.
+
+The a) program is not able to compute $F_{50}$ if we use an int type of 4 bytes. A 4 byte `int` type can store values up to $2^{31} - 1 = 2147483647$. But, $F_{50} = 12586269025$, which exceeds this, will result in overflow and the final value returned would be wrong. 
+
+The b) program is able to compute $F_{50}$ and numbers that are even bigger, like $F_{500}$, because it uses a custom unsigned integer type, which represents numbers using a linked list using the C++ `list` type. Digits are thus stored dynamically and allows the number to grow without overflow issues.
